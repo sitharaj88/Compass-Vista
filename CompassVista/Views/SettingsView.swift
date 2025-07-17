@@ -1,15 +1,27 @@
-//
-//  SettingsView.swift
-//  CompassVista
-//
-//  Created by Sitharaj Seenivasan on 17/07/25.
-//
+/*
+ SettingsView.swift
+ CompassVista
+
+ Author: Sitharaj Seenivasan
+ License: Apache License 2.0
+ GitHub: https://github.com/sitharaj88/Compass-Vista
+
+ Created by Sitharaj Seenivasan on 17/07/25.
+*/
 
 import SwiftUI
 
 struct SettingsView: View {
     @StateObject private var viewModel = DIContainer.shared.makeSettingsViewModel()
     @Environment(\.dismiss) private var dismiss
+    @State private var showResetAlert = false
+    @State private var showLegalSheet = false
+    
+    // Simulated location authorization status text
+    private var locationStatusText: String {
+        // Placeholder for actual location authorization status
+        "Authorized"
+    }
     
     var body: some View {
         NavigationView {
@@ -26,26 +38,35 @@ struct SettingsView: View {
                                 Text(theme.rawValue)
                             }
                             .tag(theme)
+                            .listRowSeparator(.hidden)
                         }
                     }
-                    .onChange(of: viewModel.selectedTheme) { oldTheme, newTheme in
+                    .accessibilityLabel("Theme Picker")
+                    .onChange(of: viewModel.selectedTheme) { newTheme in
                         viewModel.setTheme(newTheme)
                     }
+                    .listRowSeparator(.hidden)
                     
                     // Dark mode toggle
                     Toggle("Dark Mode", isOn: $viewModel.isDarkModeEnabled)
-                        .onChange(of: viewModel.isDarkModeEnabled) { _, enabled in
+                        .accessibilityLabel("Dark Mode Toggle")
+                        .onChange(of: viewModel.isDarkModeEnabled) { enabled in
                             viewModel.setDarkMode(enabled)
                         }
+                        .listRowSeparator(.hidden)
                 }
+                .listRowBackground(Color(.systemGroupedBackground))
                 
                 // Feedback Settings
                 Section("Feedback") {
                     Toggle("Haptic Feedback", isOn: $viewModel.isHapticEnabled)
-                        .onChange(of: viewModel.isHapticEnabled) { _, enabled in
+                        .accessibilityLabel("Haptic Feedback Toggle")
+                        .onChange(of: viewModel.isHapticEnabled) { enabled in
                             viewModel.setHapticEnabled(enabled)
                         }
+                        .listRowSeparator(.hidden)
                 }
+                .listRowBackground(Color(.systemGroupedBackground))
                 
                 // App Information
                 Section("About") {
@@ -57,6 +78,7 @@ struct SettingsView: View {
                         Text("1.0.0")
                             .foregroundColor(.secondary)
                     }
+                    .listRowSeparator(.hidden)
                     
                     HStack {
                         Image(systemName: "location.circle")
@@ -66,7 +88,46 @@ struct SettingsView: View {
                         Text("Required")
                             .foregroundColor(.secondary)
                     }
+                    .listRowSeparator(.hidden)
+                    
+                    // Placeholder for LocationAuthorizationView - if this view exists in your project, replace the below block with:
+                    // LocationAuthorizationView()
+                    //     .listRowSeparator(.hidden)
+                    // If not available, simulate a row showing status and a button to open system settings:
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.orange)
+                        Text("Location Authorization")
+                        Spacer()
+                        Text(locationStatusText)
+                            .foregroundColor(.secondary)
+                        Button {
+                            locationSettingsAction()
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                                .foregroundColor(.blue)
+                                .imageScale(.large)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .accessibilityLabel("Open Location Settings")
+                    }
+                    .listRowSeparator(.hidden)
+                    
+                    Button {
+                        showLegalSheet = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "doc.text")
+                                .foregroundColor(.purple)
+                            Text("Legal & Licenses")
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .listRowSeparator(.hidden)
                 }
+                .listRowBackground(Color(.systemGroupedBackground))
                 
                 // Calibration Info
                 Section("Calibration") {
@@ -96,7 +157,21 @@ struct SettingsView: View {
                         .font(.caption)
                     }
                     .padding(.vertical, 4)
+                    .listRowSeparator(.hidden)
                 }
+                .listRowBackground(Color(.systemGroupedBackground))
+                
+                // Reset Settings Section
+                Section {
+                    Button(role: .destructive) {
+                        showResetAlert = true
+                    } label: {
+                        Text("Reset Settings")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                    .listRowSeparator(.hidden)
+                }
+                .listRowBackground(Color(.systemGroupedBackground))
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
@@ -106,6 +181,19 @@ struct SettingsView: View {
                         dismiss()
                     }
                 }
+            }
+            .alert("Reset Settings", isPresented: $showResetAlert, actions: {
+                Button("Cancel", role: .cancel) {}
+                Button("Reset", role: .destructive) {
+                    // Call resetSettings() defined on the view model
+                    viewModel.resetSettings()
+                    dismiss()
+                }
+            }, message: {
+                Text("Are you sure you want to reset all settings to their defaults?")
+            })
+            .sheet(isPresented: $showLegalSheet) {
+                LegalView()
             }
         }
     }
@@ -118,6 +206,14 @@ struct SettingsView: View {
         case .military: return .green
         case .ocean: return .teal
         case .sunset: return .orange
+        }
+    }
+    
+    private func locationSettingsAction() {
+        // Open the app settings so user can change location permission
+        if let url = URL(string: UIApplication.openSettingsURLString),
+           UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
         }
     }
 }
@@ -198,6 +294,55 @@ struct SecondaryButtonStyle: ButtonStyle {
             )
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
+    }
+}
+
+struct LegalView: View {
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("Sitharaj Seenivasan")
+                        .font(.title)
+                        .fontWeight(.bold)
+                    
+                    Text("Apache License 2.0 Summary")
+                        .font(.headline)
+                    
+                    Text("""
+                    Licensed under the Apache License, Version 2.0 (the "License");
+                    you may not use this file except in compliance with the License.
+                    You may obtain a copy of the License at
+
+                    http://www.apache.org/licenses/LICENSE-2.0
+
+                    Unless required by applicable law or agreed to in writing, software
+                    distributed under the License is distributed on an "AS IS" BASIS,
+                    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                    See the License for the specific language governing permissions and
+                    limitations under the License.
+                    """)
+                    .font(.body)
+                    .fixedSize(horizontal: false, vertical: true)
+                    
+                    Link("GitHub Repository", destination: URL(string: "https://github.com/sitharaj88/Compass-Vista")!)
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                }
+                .padding()
+            }
+            .navigationTitle("Legal & Licenses")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
     }
 }
 

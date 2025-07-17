@@ -75,6 +75,13 @@ class SettingsViewModel: ObservableObject {
             hapticService.selectionFeedback()
         }
     }
+    
+    /// Reset all settings to their default values
+    func resetSettings() {
+        setHapticEnabled(true)
+        setTheme(.classic)
+        setDarkMode(false)
+    }
 }
 
 class CalibrationViewModel: ObservableObject {
