@@ -82,6 +82,8 @@ enum CompassTheme: String, CaseIterable {
     case modern = "Modern"
     case minimal = "Minimal"
     case military = "Military"
+    case ocean = "Ocean"
+    case sunset = "Sunset"
     
     var needleColor: String {
         switch self {
@@ -89,6 +91,8 @@ enum CompassTheme: String, CaseIterable {
         case .modern: return "blue"
         case .minimal: return "gray"
         case .military: return "green"
+        case .ocean: return "teal"
+        case .sunset: return "orange"
         }
     }
     
@@ -98,6 +102,8 @@ enum CompassTheme: String, CaseIterable {
         case .modern: return "white"
         case .minimal: return "lightGray"
         case .military: return "darkGreen"
+        case .ocean: return "lightTeal"
+        case .sunset: return "sunsetGradient"
         }
     }
 }

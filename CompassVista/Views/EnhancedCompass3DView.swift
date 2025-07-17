@@ -200,6 +200,10 @@ struct RealisticCompassBase: View {
                     endRadius: size / 1.5
                 )
             )
+        case .ocean:
+            return AnyShapeStyle(RadialGradient(gradient: Gradient(colors: [Color.teal.opacity(0.8), Color.blue.opacity(0.6)]), center: .center, startRadius: 0, endRadius: size / 1.5))
+        case .sunset:
+            return AnyShapeStyle(RadialGradient(gradient: Gradient(colors: [Color.orange.opacity(0.9), Color.pink.opacity(0.7)]), center: .center, startRadius: 0, endRadius: size / 1.5))
         }
     }
     
@@ -246,6 +250,10 @@ struct RealisticCompassBase: View {
                 startRadius: 0,
                 endRadius: size / 2
             )
+        case .ocean:
+            return RadialGradient(gradient: Gradient(colors: [Color.teal.opacity(0.5), Color.blue.opacity(0.4)]), center: .center, startRadius: 0, endRadius: size / 2)
+        case .sunset:
+            return RadialGradient(gradient: Gradient(colors: [Color.orange.opacity(0.6), Color.red.opacity(0.4)]), center: .center, startRadius: 0, endRadius: size / 2)
         }
     }
 }
@@ -363,6 +371,8 @@ struct DetailedCompassRose: View {
             case .modern: return Color.primary
             case .minimal: return Color.primary
             case .military: return Color(hex: "385723") // Dark green
+            case .ocean: return Color.teal
+            case .sunset: return Color.orange
             }
         } else {
             return Color.primary.opacity(0.8)
@@ -376,13 +386,22 @@ struct DetailedCompassRose: View {
             case .modern: return Color.blue
             case .minimal: return Color.primary
             case .military: return Color.green
+            case .ocean: return Color.teal
+            case .sunset: return Color.orange
             }
         } else if degree % 45 == 0 {
             return Color.primary.opacity(0.9)
         } else if degree % 15 == 0 {
             return Color.primary.opacity(0.7)
         } else {
-            return Color.primary.opacity(0.5)
+            switch theme {
+            case .classic: return Color.primary.opacity(0.5)
+            case .modern: return Color.primary.opacity(0.5)
+            case .minimal: return Color.primary.opacity(0.5)
+            case .military: return Color.primary.opacity(0.5)
+            case .ocean: return Color.teal.opacity(0.5)
+            case .sunset: return Color.orange.opacity(0.5)
+            }
         }
     }
 }
@@ -420,6 +439,10 @@ struct CompassRosePattern: View {
             return [Color.gray.opacity(0.6), Color.gray.opacity(0.3)]
         case .military:
             return [Color.green.opacity(0.6), Color.green.opacity(0.3)]
+        case .ocean:
+            return [Color.teal.opacity(0.6), Color.blue.opacity(0.3)]
+        case .sunset:
+            return [Color.orange.opacity(0.6), Color.pink.opacity(0.3)]
         }
     }
 }
@@ -489,8 +512,9 @@ struct PremiumCompassNeedle: View {
                             )
                     )
                     .frame(width: size * 0.07, height: size * 0.35)
-                    .offset(y: -size * 0.175)
-                    .shadow(color: .black.opacity(0.5), radius: 2, x: 1, y: 1)
+                    .offset(y: size * 0.175)
+                    .rotationEffect(.degrees(180))
+                    .shadow(color: .black.opacity(0.5), radius: 2, x: -1, y: -1)
             }
             .shadow(color: .black.opacity(0.3), radius: 5, x: 2, y: 2)
             .rotationEffect(.degrees(rotation))
@@ -502,23 +526,21 @@ struct PremiumCompassNeedle: View {
     
     private func getNorthNeedleColors() -> [Color] {
         switch theme {
-        case .classic:
-            return [Color(hex: "8B0000"), Color(hex: "FF0000"), Color(hex: "8B0000")]
-        case .modern:
-            return [Color(hex: "003366"), Color(hex: "0066CC"), Color(hex: "003366")]
-        case .minimal:
-            return [Color(hex: "2B2B2B"), Color(hex: "555555"), Color(hex: "2B2B2B")]
-        case .military:
-            return [Color(hex: "2B5329"), Color(hex: "4C9A2A"), Color(hex: "2B5329")]
+        case .classic: return [Color(hex: "8B0000"), Color(hex: "FF0000"), Color(hex: "8B0000")]
+        case .modern: return [Color(hex: "003366"), Color(hex: "0066CC"), Color(hex: "003366")]
+        case .minimal: return [Color(hex: "2B2B2B"), Color(hex: "555555"), Color(hex: "2B2B2B")]
+        case .military: return [Color(hex: "2B5329"), Color(hex: "4C9A2A"), Color(hex: "2B5329")]
+        case .ocean: return [Color.teal, Color.cyan, Color.teal]
+        case .sunset: return [Color.orange, Color.pink, Color.orange]
         }
     }
     
     private func getSouthNeedleColors() -> [Color] {
         switch theme {
-        case .classic, .modern, .military:
-            return [Color(hex: "CCCCCC"), Color(hex: "FFFFFF"), Color(hex: "CCCCCC")]
-        case .minimal:
-            return [Color(hex: "555555"), Color(hex: "999999"), Color(hex: "555555")]
+        case .classic, .modern, .military: return [Color(hex: "CCCCCC"), Color(hex: "FFFFFF"), Color(hex: "CCCCCC")]
+        case .minimal: return [Color(hex: "555555"), Color(hex: "999999"), Color(hex: "555555")]
+        case .ocean: return [Color.gray, Color.white, Color.gray]
+        case .sunset: return [Color.gray, Color.white, Color.gray]
         }
     }
 }
@@ -687,14 +709,12 @@ struct CenterPivot: View {
     
     private func getPivotColors() -> [Color] {
         switch theme {
-        case .classic:
-            return [Color(hex: "FFD700"), Color(hex: "B8860B")]
-        case .modern:
-            return [Color(hex: "B0C4DE"), Color(hex: "4682B4")]
-        case .minimal:
-            return [Color(hex: "A9A9A9"), Color(hex: "696969")]
-        case .military:
-            return [Color(hex: "8FBC8F"), Color(hex: "556B2F")]
+        case .classic: return [Color(hex: "FFD700"), Color(hex: "B8860B")]
+        case .modern: return [Color(hex: "B0C4DE"), Color(hex: "4682B4")]
+        case .minimal: return [Color(hex: "A9A9A9"), Color(hex: "696969")]
+        case .military: return [Color(hex: "8FBC8F"), Color(hex: "556B2F")]
+        case .ocean: return [Color.teal.opacity(0.7), Color.blue.opacity(0.7)]
+        case .sunset: return [Color.orange.opacity(0.7), Color.red.opacity(0.7)]
         }
     }
 }

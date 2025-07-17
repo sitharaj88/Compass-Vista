@@ -78,6 +78,8 @@ struct CompassBackgroundView: View {
         case .modern: return .blue
         case .minimal: return .gray
         case .military: return .green
+        case .ocean: return .teal
+        case .sunset: return .orange
         }
     }
 }
@@ -284,6 +286,8 @@ struct Compass3DNeedleView: View {
         case .modern: return .blue
         case .minimal: return .primary
         case .military: return .green
+        case .ocean: return .teal
+        case .sunset: return .orange
         }
     }
 }
@@ -363,6 +367,8 @@ struct DynamicBackgroundView: View {
             case .modern: return [.black, .blue.opacity(0.3)]
             case .minimal: return [.black, .gray.opacity(0.5)]
             case .military: return [.black, .green.opacity(0.3)]
+            case .ocean: return [.black, .teal.opacity(0.3)]
+            case .sunset: return [.black, .orange.opacity(0.3)]
             }
         } else {
             switch theme {
@@ -370,6 +376,8 @@ struct DynamicBackgroundView: View {
             case .modern: return [.white, .blue.opacity(0.1)]
             case .minimal: return [.white, .gray.opacity(0.1)]
             case .military: return [.white, .green.opacity(0.1)]
+            case .ocean: return [.white, .teal.opacity(0.1)]
+            case .sunset: return [.white, .orange.opacity(0.2)]
             }
         }
     }
@@ -380,6 +388,8 @@ struct DynamicBackgroundView: View {
         case .modern: return .cyan
         case .minimal: return .gray
         case .military: return .yellow
+        case .ocean: return .teal
+        case .sunset: return .orange
         }
     }
 }

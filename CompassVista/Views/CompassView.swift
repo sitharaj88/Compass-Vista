@@ -104,6 +104,8 @@ struct HeaderView: View {
         case .modern: return .blue
         case .minimal: return .primary
         case .military: return .green
+        case .ocean: return .teal
+        case .sunset: return .orange
         }
     }
 }

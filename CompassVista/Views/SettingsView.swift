@@ -116,10 +116,95 @@ struct SettingsView: View {
         case .modern: return .blue
         case .minimal: return .gray
         case .military: return .green
+        case .ocean: return .teal
+        case .sunset: return .orange
         }
+    }
+}
+
+struct CalibrationAnimationView: View {
+    let state: CalibrationState
+    @State private var rotation: Double = 0
+    @State private var scale: CGFloat = 1.0
+    
+    var body: some View {
+        ZStack {
+            // Background circle
+            Circle()
+                .stroke(Color.blue.opacity(0.3), lineWidth: 4)
+                .frame(width: 150, height: 150)
+            
+            // Animated elements based on state
+            switch state {
+            case .notStarted:
+                Image(systemName: "gyroscope")
+                    .font(.system(size: 60))
+                    .foregroundColor(.blue)
+                    .scaleEffect(scale)
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                            scale = 1.2
+                        }
+                    }
+                
+            case .inProgress:
+                Image(systemName: "gyroscope")
+                    .font(.system(size: 60))
+                    .foregroundColor(.blue)
+                    .rotationEffect(.degrees(rotation))
+                    .onAppear {
+                        withAnimation(.linear(duration: 2.0).repeatForever(autoreverses: false)) {
+                            rotation = 360
+                        }
+                    }
+                
+            case .completed:
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.green)
+                    .scaleEffect(scale)
+                    .onAppear {
+                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                            scale = 1.2
+                        }
+                    }
+                
+            case .failed:
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.red)
+                    .scaleEffect(scale)
+                    .onAppear {
+                        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                            scale = 1.2
+                        }
+                    }
+            }
+        }
+    }
+}
+
+struct SecondaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.headline)
+            .foregroundColor(.blue)
+            .padding()
+            .background(Color.blue.opacity(0.1))
+            .cornerRadius(12)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.blue, lineWidth: 1)
+            )
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
     }
 }
 
 #Preview {
     SettingsView()
+}
+
+#Preview {
+    CalibrationView()
 }
