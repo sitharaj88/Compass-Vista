@@ -28,13 +28,13 @@ struct SettingsView: View {
                             .tag(theme)
                         }
                     }
-                    .onChange(of: viewModel.selectedTheme) { theme in
-                        viewModel.setTheme(theme)
+                    .onChange(of: viewModel.selectedTheme) { oldTheme, newTheme in
+                        viewModel.setTheme(newTheme)
                     }
                     
                     // Dark mode toggle
                     Toggle("Dark Mode", isOn: $viewModel.isDarkModeEnabled)
-                        .onChange(of: viewModel.isDarkModeEnabled) { enabled in
+                        .onChange(of: viewModel.isDarkModeEnabled) { _, enabled in
                             viewModel.setDarkMode(enabled)
                         }
                 }
@@ -42,7 +42,7 @@ struct SettingsView: View {
                 // Feedback Settings
                 Section("Feedback") {
                     Toggle("Haptic Feedback", isOn: $viewModel.isHapticEnabled)
-                        .onChange(of: viewModel.isHapticEnabled) { enabled in
+                        .onChange(of: viewModel.isHapticEnabled) { _, enabled in
                             viewModel.setHapticEnabled(enabled)
                         }
                 }

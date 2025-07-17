@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import CoreMotion
 
 struct CalibrationView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var compassViewModel: CompassViewModel
     @State private var calibrationStep = 0
     @State private var isCalibrating = false
     @State private var calibrationProgress: CGFloat = 0
+    @State private var hapticService = HapticService()
     
     var body: some View {
         NavigationView {
@@ -102,6 +105,7 @@ struct CalibrationView: View {
                 if calibrationStep > 3 {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Done") {
+                            completeCalibration()
                             dismiss()
                         }
                         .fontWeight(.semibold)
@@ -114,21 +118,39 @@ struct CalibrationView: View {
     private func startCalibration() {
         isCalibrating = true
         calibrationStep = 1
+        calibrationProgress = 0
         
-        // Fixed Timer initialization to avoid ambiguity
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [self] timer in
+        // Set calibration state to in progress
+        compassViewModel.calibrationState = .inProgress
+        hapticService.mediumFeedback()
+        
+        // Simulate calibration process
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
             calibrationProgress += 0.02
             
             if calibrationProgress >= 0.33 && calibrationStep == 1 {
                 calibrationStep = 2
+                hapticService.lightFeedback()
             } else if calibrationProgress >= 0.66 && calibrationStep == 2 {
                 calibrationStep = 3
+                hapticService.lightFeedback()
             } else if calibrationProgress >= 1.0 {
                 calibrationStep = 4
                 isCalibrating = false
+                hapticService.mediumFeedback()
                 timer.invalidate()
+                completeCalibration()
             }
         }
+    }
+    
+    private func completeCalibration() {
+        hapticService.heavyFeedback()
+        compassViewModel.calibrationState = .completed
+        
+        // Store calibration completion in UserDefaults
+        UserDefaults.standard.set(true, forKey: "compass_calibrated")
+        UserDefaults.standard.set(Date(), forKey: "calibration_date")
     }
 }
 
@@ -195,4 +217,5 @@ struct CalibrationStepView: View {
 
 #Preview {
     CalibrationView()
+        .environmentObject(DIContainer.shared.makeCompassViewModel())
 }

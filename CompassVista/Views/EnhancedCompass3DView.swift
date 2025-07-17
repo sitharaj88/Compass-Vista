@@ -281,7 +281,7 @@ struct DetailedCompassRose: View {
                             endPoint: .bottom
                         )
                     )
-                    .frame(width: 1.5, height: size - 60)
+                    .frame(width: 1.5, height: max(size - 60, 1))
                     .rotationEffect(.degrees(Double(index) * 45))
             }
             
@@ -298,7 +298,7 @@ struct DetailedCompassRose: View {
                             endPoint: .bottom
                         )
                     )
-                    .frame(width: 1, height: size - 80)
+                    .frame(width: 1, height: max(size - 80, 1))
                     .rotationEffect(.degrees(Double(index) * 45 + 22.5))
             }
             

@@ -49,6 +49,7 @@ struct CompassView: View {
         }
         .onAppear {
             viewModel.startCompass()
+            checkCalibrationStatus()
         }
         .onDisappear {
             viewModel.stopCompass()
@@ -58,6 +59,32 @@ struct CompassView: View {
         }
         .sheet(isPresented: $showingCalibration) {
             CalibrationView()
+                .environmentObject(viewModel)
+        }
+        .alert("Compass Needs Calibration", isPresented: .constant(viewModel.calibrationState == .failed)) {
+            Button("Calibrate Now") {
+                showingCalibration = true
+            }
+            Button("Later", role: .cancel) { }
+        } message: {
+            Text("Your compass accuracy is low. Calibration will improve reading precision.")
+        }
+    }
+    
+    private func checkCalibrationStatus() {
+        // Check if compass was calibrated recently (within 30 days)
+        if let lastCalibration = UserDefaults.standard.object(forKey: "calibration_date") as? Date {
+            let daysSinceCalibration = Calendar.current.dateComponents([.day], from: lastCalibration, to: Date()).day ?? 0
+            if daysSinceCalibration > 30 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    viewModel.calibrationState = .failed
+                }
+            }
+        } else {
+            // Never calibrated - show prompt after a delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                viewModel.calibrationState = .failed
+            }
         }
     }
 }
