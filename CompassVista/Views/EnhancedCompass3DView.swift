@@ -444,7 +444,31 @@ struct PremiumCompassNeedle: View {
             
             // 3D needle with metallic effect
             ZStack {
-                // North pointer with premium 3D effect
+                // South pointer with premium 3D effect (rendered first, so it appears behind north)
+                EnhancedSouthNeedleShape()
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: getSouthNeedleColors()),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .overlay(
+                        EnhancedSouthNeedleShape()
+                            .stroke(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.white.opacity(0.7), .clear]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                ),
+                                lineWidth: 1
+                            )
+                    )
+                    .frame(width: size * 0.07, height: size * 0.35)
+                    .offset(y: size * 0.175)
+                    .shadow(color: .black.opacity(0.5), radius: 2, x: 1, y: 1)
+                
+                // North pointer with premium 3D effect (rendered second, so it appears in front)
                 EnhancedNeedleShape()
                     .fill(
                         LinearGradient(
@@ -467,31 +491,6 @@ struct PremiumCompassNeedle: View {
                     .frame(width: size * 0.07, height: size * 0.35)
                     .offset(y: -size * 0.175)
                     .shadow(color: .black.opacity(0.5), radius: 2, x: 1, y: 1)
-                
-                // South pointer with premium 3D effect
-                EnhancedNeedleShape()
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: getSouthNeedleColors()),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .overlay(
-                        EnhancedNeedleShape()
-                            .stroke(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.white.opacity(0.7), .clear]),
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                ),
-                                lineWidth: 1
-                            )
-                    )
-                    .frame(width: size * 0.07, height: size * 0.35)
-                    .offset(y: size * 0.175)
-                    .rotationEffect(.degrees(180))
-                    .shadow(color: .black.opacity(0.5), radius: 2, x: -1, y: -1)
             }
             .shadow(color: .black.opacity(0.3), radius: 5, x: 2, y: 2)
             .rotationEffect(.degrees(rotation))
@@ -548,6 +547,41 @@ struct EnhancedNeedleShape: Shape {
             to: CGPoint(x: width / 2, y: 0),
             control: CGPoint(x: width * 0.25, y: height * 0.1)
         )
+        
+        return path
+    }
+}
+
+// Enhanced south needle shape - different design for south pointer
+struct EnhancedSouthNeedleShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        let width = rect.width
+        let height = rect.height
+        
+        // Create a different shape for south needle (more rounded/blunt)
+        path.move(to: CGPoint(x: width / 2, y: 0))
+        path.addLine(to: CGPoint(x: width * 0.75, y: height * 0.2))
+        path.addLine(to: CGPoint(x: width * 0.65, y: height * 0.3))
+        path.addQuadCurve(
+            to: CGPoint(x: width * 0.6, y: height * 0.85),
+            control: CGPoint(x: width * 0.62, y: height * 0.6)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: width / 2, y: height),
+            control: CGPoint(x: width * 0.55, y: height * 0.95)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: width * 0.4, y: height * 0.85),
+            control: CGPoint(x: width * 0.45, y: height * 0.95)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: width * 0.35, y: height * 0.3),
+            control: CGPoint(x: width * 0.38, y: height * 0.6)
+        )
+        path.addLine(to: CGPoint(x: width * 0.25, y: height * 0.2))
+        path.addLine(to: CGPoint(x: width / 2, y: 0))
         
         return path
     }
