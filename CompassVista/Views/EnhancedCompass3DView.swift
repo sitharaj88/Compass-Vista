@@ -335,17 +335,17 @@ struct DetailedCompassRose: View {
             }
             
             // Degree numbers (every 30 degrees)
-            ForEach(0..<12) { index in
-                let degree = index * 30
-                if degree != 0 && degree != 90 && degree != 180 && degree != 270 {
-                    Text("\(degree)°")
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .foregroundColor(Color.primary.opacity(0.8))
-                        .offset(y: -(size / 2 - 60))
-                        .rotationEffect(.degrees(Double(degree)))
-                        .rotationEffect(.degrees(-Double(degree))) // Counter-rotate text
-                }
-            }
+//            ForEach(0..<12) { index in
+//                let degree = index * 30
+//                if degree != 0 && degree != 90 && degree != 180 && degree != 270 {
+//                    Text("\(degree)°")
+//                        .font(.system(size: 12, weight: .medium, design: .rounded))
+//                        .foregroundColor(Color.primary.opacity(0.8))
+//                        .offset(y: -(size / 2 - 60))
+//                        .rotationEffect(.degrees(Double(degree)))
+//                        .rotationEffect(.degrees(-Double(degree))) // Counter-rotate text
+//                }
+//            }
         }
     }
     
