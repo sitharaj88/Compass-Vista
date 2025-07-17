@@ -12,6 +12,7 @@ struct CompassVistaApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(DIContainer.shared)
         }
     }
 }
